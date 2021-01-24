@@ -5,6 +5,49 @@
 #include <assert.h>
 #include <string.h>
 
+
+
+void printScreen(FILE *inputf, FILE *outputf){
+		char *line=NULL;
+		size_t length=0;
+		int lineCount =0;
+		int currentLineSize=0;
+		//int lastSize=0;
+		
+		
+		//fseek(FILE *stream, long int offset, int whence)
+		
+		while(currentLineSize!=-1 ){
+			//lastSize = currentLineSize;
+			currentLineSize =getline(&line,&length,inputf);
+			if(currentLineSize!=-1) ++lineCount;
+			if(currentLineSize!=-1)printf("line: %s",line);
+		}
+		printf("\n_______________________\n");
+		fseek(inputf, 0, SEEK_SET);
+		int * lineLengths = (int*)malloc(sizeof(int)*lineCount);
+		for(int i =0;i<lineCount;++i){
+			lineLengths[i] =getline(&line,&length,inputf);			
+		}
+
+		int LengthFromBottom= 0;
+		if(outputf==NULL){
+			for(int i =lineCount-1;i>=0;--i){
+				
+				LengthFromBottom= LengthFromBottom + lineLengths[i];
+				//printf("i:%d , lineLen: %d, lineTot: %d\n",i,lineLengths[i],LengthFromBottom);
+				fseek(inputf, -LengthFromBottom, SEEK_END);
+				getline(&line,&length,inputf);
+				if (i == lineCount-1 && line[lineLengths[lineCount-1]-1]=='\n'){printf("\n");}
+				printf("%s",line);
+				if (i == lineCount-1 && line[lineLengths[lineCount-1]-1]!='\n'){printf("\n");}
+			}
+		}
+	
+	return;
+}
+
+
 int main(int argc, char* argv[]){
 
 
@@ -48,27 +91,9 @@ int main(int argc, char* argv[]){
 		// linerBuffer = (char**)malloc(sizeof(char*)*10);
 		
 		//read file
-		char *line=NULL;
-		size_t length=0;
-		int lineCount =0;
-		int currentLineSize=0;
-		int lastSize=0;
-		
-		
-		//fseek(FILE *stream, long int offset, int whence)
+		printScreen(inputf, NULL);
 
-		
-		while(currentLineSize!=-1){
-			lastSize = currentLineSize;
-			currentLineSize =getline(&line,&length,inputf);
-			++lineCount;
-			//printf("line: %s, line Count %d\n",line,lineCount);
-			//printf("%p\n",(void *) inputf);
-		}
-		
-		fseek(inputf, -lastSize, SEEK_END);
-		getline(&line,&length,inputf);
-		printf("line: %s, line count %d\n",line,lineCount);
+
 		
 		fclose(inputf);
 		
