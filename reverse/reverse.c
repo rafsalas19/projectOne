@@ -141,13 +141,13 @@ int main(int argc, char* argv[]){
 		if(argc >2){//user provided two files
 			outputName=argv[2];		
 			if(strcmp(inputName, outputName )==0){
-				fprintf(stderr, "Input and output file must differ\n");
+				fprintf(stderr, "reverse: input and output file must differ\n");
 				exit(1);
 			}	
 		//try to open out file			
 			outputf = fopen(outputName,"w");
 			if(outputf==NULL){
-				fprintf(stderr,"reverse: cannot open file %s\n",outputName);
+				fprintf(stderr,"reverse: cannot open file '%s'\n",outputName);
 				exit(1);
 			}
 		}
@@ -158,7 +158,7 @@ int main(int argc, char* argv[]){
 		
 		inputf= fopen(inputName,"r");//try to open input file	
 		if(inputf==NULL){
-			fprintf(stderr,"reverse: cannot open file %s\n",inputName);
+			fprintf(stderr,"reverse: cannot open file '%s'\n",inputName);
 			exit(1);
 		}
 
