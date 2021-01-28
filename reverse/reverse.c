@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <string.h>
 #define VECTOR_SIZE 10
-
+#include <sys/stat.h>
 
 int vectorSize= VECTOR_SIZE;
 char **stringVector;
@@ -59,12 +59,12 @@ void reverseInput(FILE *inputf, FILE *outputf){
 		for(int i =currentIndex-1;i>=0;--i){
 			char* temp= stringVector[i];
 			if(outputf == NULL){			
-				if (i == currentIndex-1 && stringVector[i][lastLength-1]=='\n'){printf("\n");}
+				//if (i == currentIndex-1 && stringVector[i][lastLength-1]=='\n'){printf("\n");}
 				printf("%s",temp);
 				if (i == currentIndex-1 && stringVector[i][lastLength-1]!='\n'){printf("\n");}
 			}
 			else{
-				if (i == currentIndex-1 && stringVector[i][lastLength-1]=='\n'){fputs("\n",outputf);}
+				//if (i == currentIndex-1 && stringVector[i][lastLength-1]=='\n'){fputs("\n",outputf);}
 				fputs(temp,outputf);
 				if (i == currentIndex-1 && stringVector[i][lastLength-1]!='\n'){fputs("\n",outputf);}
 			}
@@ -72,45 +72,6 @@ void reverseInput(FILE *inputf, FILE *outputf){
 	
 }
 
-void printFileScreen(FILE *inputf, FILE *outputf){
-		char *line=NULL;
-		size_t length=0;
-		int lineCount =0;
-		int currentLineSize=0;
-		//int lastSize=0;
-		
-		
-		//fseek(FILE *stream, long int offset, int whence)
-		
-		while(currentLineSize!=-1 ){
-			//lastSize = currentLineSize;
-			currentLineSize =getline(&line,&length,inputf);
-			if(currentLineSize!=-1) ++lineCount;
-			if(currentLineSize!=-1)printf("line: %s",line);
-		}
-		printf("\n_______________________\n");
-		fseek(inputf, 0, SEEK_SET);
-		int * lineLengths = (int*)malloc(sizeof(int)*lineCount);
-		for(int i =0;i<lineCount;++i){
-			lineLengths[i] =getline(&line,&length,inputf);			
-		}
-
-		int LengthFromBottom= 0;
-		if(outputf==NULL){
-			for(int i =lineCount-1;i>=0;--i){
-				
-				LengthFromBottom= LengthFromBottom + lineLengths[i];
-				//printf("i:%d , lineLen: %d, lineTot: %d\n",i,lineLengths[i],LengthFromBottom);
-				fseek(inputf, -LengthFromBottom, SEEK_END);
-				getline(&line,&length,inputf);
-				if (i == lineCount-1 && line[lineLengths[lineCount-1]-1]=='\n'){printf("\n");}
-				printf("%s",line);
-				if (i == lineCount-1 && line[lineLengths[lineCount-1]-1]!='\n'){printf("\n");}
-			}
-		}
-	
-	return;
-}
 
 
 
@@ -128,7 +89,7 @@ int main(int argc, char* argv[]){
 		exit(1);
 	}
 	else if(argc<2){
-		printf("Please input your words:\n");
+		
 		reverseInput(NULL, NULL);
 
 	}
@@ -144,7 +105,31 @@ int main(int argc, char* argv[]){
 				fprintf(stderr, "reverse: input and output file must differ\n");
 				exit(1);
 			}	
-		//try to open out file			
+
+			inputf= fopen(inputName,"r");//try to open input file	
+			if(inputf==NULL){
+				fprintf(stderr,"reverse: cannot open file '%s'\n",inputName);
+				exit(1);
+			}
+			outputf = fopen(outputName,"a");
+			if(outputf==NULL){
+				fprintf(stderr,"reverse: cannot open file '%s'\n",outputName);
+				exit(1);
+			}
+			
+			struct stat ofstat;
+			struct stat ifstat;
+			int ofd=fileno(outputf);
+			int ifd=fileno(inputf);
+			if(fstat (ofd, &ofstat) ==-1){ fprintf(stderr, "failed to get file inode");exit(1);}
+			if(fstat (ifd, &ifstat) ==-1){ fprintf(stderr, "failed to get file inode");exit(1);}
+			if(ofstat.st_ino == ifstat.st_ino){
+				fprintf(stderr, "reverse: input and output file must differ\n");
+				exit(1);
+			}
+			
+			fclose(outputf);
+			//try to open out file
 			outputf = fopen(outputName,"w");
 			if(outputf==NULL){
 				fprintf(stderr,"reverse: cannot open file '%s'\n",outputName);
@@ -153,14 +138,16 @@ int main(int argc, char* argv[]){
 		}
 		else//user only provided one file
 		{
+			inputf= fopen(inputName,"r");//try to open input file	
+			if(inputf==NULL){
+				//printf("hello\n");
+				fprintf(stderr,"reverse: cannot open file '%s'\n",inputName);
+				exit(1);
+			}
 			outputName = NULL;
 		}
 		
-		inputf= fopen(inputName,"r");//try to open input file	
-		if(inputf==NULL){
-			fprintf(stderr,"reverse: cannot open file '%s'\n",inputName);
-			exit(1);
-		}
+
 
 		//
 		reverseInput(inputf, outputf);
