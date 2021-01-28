@@ -35,8 +35,9 @@
 *.i*86
 *.x86_64
 *.hex
+reverse
 
-# Debug files
+# Debus files
 *.dSYM/
 *.su
 *.idb
