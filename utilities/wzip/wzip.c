@@ -52,10 +52,10 @@ void compress(FILE* infile,int fileCount){
 		else{
 			//print charcout and char
 
-			if(charCount !=1){
+			//if(charCount !=1){
 				fwrite(&charCount,sizeof(int),1,stdout);
 				//printf("%d",charCount);
-			}
+			//}
 			//printf("%c",lastChar);
 			if (lastChar=='\n') newLineCount++;
 			fputc(lastChar,stdout);
@@ -93,10 +93,10 @@ int main(int argc, char * argv[]){
 		fclose(inputf[i]);
 		
 	if(i==argc-2){
-		if(charCount !=1){
+		//if(charCount !=1){
 				fwrite(&charCount,sizeof(int),1,stdout);
 				//printf("%d",charCount);
-			}
+		//	}
 			if (lastChar=='\n') newLineCount++;
 			//printf("%c",lastChar);
 			fputc(lastChar,stdout);
