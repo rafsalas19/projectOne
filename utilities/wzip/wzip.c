@@ -30,8 +30,8 @@ void compress(FILE* infile,int fileCount){
 			//print charcout and char
 
 			if(charCount !=1){
-				fwrite(&charCount,sizeof(int),1,stdout);
-				//printf("%d",charCount);
+				//fwrite(&charCount,sizeof(int),1,stdout);
+				printf("%d",charCount);
 			}
 			printf("%c",lastChar);
 			//printf("\n");
@@ -40,7 +40,7 @@ void compress(FILE* infile,int fileCount){
 		}
 
 	}
-	
+
 }
 
 
@@ -56,9 +56,20 @@ int main(int argc, char * argv[]){
 			printf("wcat: cannot open file\n" );
 			exit(1);
 		}	
+		
 		//place code here
 		compress(inputf[i],i);
 		fclose(inputf[i]);
+		
+	if(i==argc-2){
+		if(charCount !=1){
+				fwrite(&charCount,sizeof(int),1,stdout);
+				//printf("%d",charCount);
+			}
+			printf("%c",lastChar);
+		
+	}
+		
 	}
 	// int test[5]={0,1,2,3,4};
 	// fwrite(test,sizeof(int),5,stdout);
