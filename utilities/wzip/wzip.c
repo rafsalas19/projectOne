@@ -14,13 +14,17 @@ void compress(FILE* infile,int fileCount){
 	char inchar[1];
 	//size_t length=0;
 	//int charCount =1;
-	inchar[0] = fgetc(infile);
-	if(fileCount==0)lastChar =inchar[0];
+	
+	if(fileCount==0){
+		inchar[0] = fgetc(infile);
+		lastChar =inchar[0];
+	}
 	
 
 	while(inchar[0] !=EOF){	
 	
 		inchar[0] = fgetc(infile);
+		//if(inchar[0] == '\n'){continue;}
 		if(inchar[0]==EOF) break;
 		if(lastChar==inchar[0]){
 			//printf("%d\n",charCount);
@@ -30,8 +34,8 @@ void compress(FILE* infile,int fileCount){
 			//print charcout and char
 
 			if(charCount !=1){
-				//fwrite(&charCount,sizeof(int),1,stdout);
-				printf("%d",charCount);
+				fwrite(&charCount,sizeof(int),1,stdout);
+				//printf("%d",charCount);
 			}
 			printf("%c",lastChar);
 			//printf("\n");
@@ -47,9 +51,15 @@ void compress(FILE* infile,int fileCount){
 
 
 int main(int argc, char * argv[]){
-	
+	//printf("hi");
 	FILE **inputf = (FILE **)malloc(sizeof(FILE*)*(argc-1));
+	if(argc<2){
+		printf("wzip: file1 [file2 ...]\n");
+		exit(1);
+	}
+	//char a ='LF';
 	
+	//printf("%cg%cg%c",a,a,a);
 	for(int i = 0;i<argc-1;++i){
 		inputf[i]= fopen(argv[i+1],"r");//try to open input file	
 		if(inputf[i]==NULL){
